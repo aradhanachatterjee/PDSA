@@ -1,0 +1,159 @@
+---
+title: "Lecture 2.1: Analysis of Algorithms"
+format:
+    revealjs:
+        incremental: true
+        slideNumber: true
+        smaller: true
+        center: true
+        scrollable: true
+---
+
+## Measuring performance
+
+- Example of validating SIM cards against Aadhaar data
+  - Naive approach takes thousands of years
+  - Smarter solution takes a few minutes
+
+- Two main resources of interest
+  - Running time - how long the algorithm takes
+  - Space - memory requirement
+
+- Time depends on processing power
+  - Impossible to change for given hardware
+  - Enhancing hardware has only a limited impact at a practical level
+
+- Storage is limited by available memory
+  - Easier to configure, augment
+
+- Typically, we focus on time rather than space
+
+## Input size
+
+:::: {.columns}
+
+::: {.column width=50%}
+
+- Running time depends on input size
+  - Larger arrays will take longer to sort
+
+- Measure time efficiency as a function of input size
+  - Input size $n$
+  - Running time $t(n)$
+
+- Different inputs of the same size $n$ can have different running times
+
+:::
+
+::: {.column width=50%}
+
+- *Example 1*: SIM cards vs Aadhaar cards
+  - $n \approx 10^9$ - number of cards
+  - Naive algorithm: $t(n) \approx n^2$
+  - Clever algorithm: $t(n) \approx n \log_{2} n$
+    - $log_{2}n$ - number of times you need to divide $n$ by $2$ to reach $1$
+    - $log_{2}n = k \implies n = 2^k$
+
+:::
+
+::::
+
+## Input size...
+
+:::: {.columns}
+
+::: {.column width=50%}
+- *Example 2*: Video game
+  - Several objects on screen
+  - Basic step: find closest pair of objects
+  - $n$ objects - naive algorithm is $n^2$
+    - For each pair of objects, calculate distance
+    - Report minimum distance across all pairs
+- There is a clever algorithm that takes $n \log_{2} n$
+
+:::
+
+::: {.column width=50%}
+- High resolution gaming console may have $4000 \times 2000$ pixels
+  - $8 \times 10^6$ points - $8$ million
+- Suppose we have $100,000 = 1 \times 10^5$ objects
+- Naive algorithm takes $10^{10}$ steps
+  - $1000$ seconds, or $16.7$ minutes in Python
+  - Unacceptable for a video game!
+- $log_{2}100,000$ is under $20$, so $nlog_{2}n$ takes a fraction of a second
+
+:::
+
+::::
+
+## Orders of magnitude
+
+- When comparing $t(n)$, focus on the order of magnitude
+  - Ignore constants factors
+- $f(n) = n^3$ eventually grows faster than $g(n) = 5000n^2$
+  - For small values of $n$, $f(n) < g(n)$
+  - After $n=5000$, $f(n)$ overtakes $g(n)$
+- *Asymptotic complexity*
+  - What happens in the limit as $n$ becomes large
+- Typical growth functions
+  - Is $t(n)$ proportional to $logn$, ..., $n^2$, $n^3$, ..., $2^n$?
+    - Note: $logn$ means $log_{2}n$ by default
+  - Logarithmic, polynomial, exponential, ...
+
+## Measuring running time
+
+- Analysis should be independent of the underlying hardware
+  - Don't use actual time
+  - Measure in terms of *basic operations*
+- Typical basic operations
+  - Compare two values
+  - Assign a value to a variable
+- Exchange a pair of values? ```
+  (x,y) = (y,x)
+  t = x
+  x = y
+  y = t ```
+  - If we ignore constants, focus on orders of magnitude, both are within a factor of $3$
+  - Need not be very precise about defining basic operations
+
+## What is the input size
+
+- Typically a natural parameter
+  - Size of a list/array that we want to search or sort
+  - Number of objects we want to rearrange
+  - Number of vertices and number of edges in a graph
+
+- What about numeric problems? Is $n$ a prime?
+  - Magnitude of $n$ is not the correct measure
+  - Arithmetic operations are performed digit by digit
+    - Addition with carry, subtraction with borrow, multiplication, long division...
+  - Number of digits is a natural measure of input size
+    - Same as $log_{b}n$, when we write $n$ in base $b$
+
+## Which inputs should we consider?
+
+- Performance varies across input instances
+  - By luck, the value we are searching for is the first element we examine in an array
+- Ideally, want the "average" behaviour
+  - Difficult to compute
+  - Average over what? Are all inputs equally likely?
+  - Need a probability distribution over inputs
+- Instead, *worst case* input
+  - Input that forces algorithm to take the longest time
+    - Search for a value that is not present in an unsorted list
+    - Must scan all elements
+  - Pessimistic - worst case may be rare
+  - Upper bound for worst case *guarantees* good performance
+
+## Summary
+
+- Two important parameters when measuring algorithm performance
+  - Running time, memory requirement (space)
+  - We mainly focus on time
+- Running time $t(n)$ is a function of input size $n$
+  - Compare algorithms by their order of magnitude
+  - Asymptotic complexity, as $n$ becomes large
+- From running time, we can estimate feasible input sizes
+- We focus on worst case inputs
+  - Pessimistic, but easier to compute than average case
+  - Upper bound on worst case gives us an overall guarantee of performance
