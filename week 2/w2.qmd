@@ -1002,3 +1002,155 @@ def mergesort(A):
 - Sort each half
 - Merge the sorted halves
 - Next, we have to check that the complexity is less than $O(n^2)$
+
+# Lecture 2.8: Analysis of Merge Sort
+
+## Merge sort
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- To sort `A` into `B`, both of length $n$
+- If $n \leq 1$, nothing to be done
+- Otherwise
+  - Sort `A[:n//2]` into `L`
+  - Sort `A[n//2:]` into `R`
+  - Merge `L` and `R` into `B`
+
+:::
+
+::: {.column width="50%"}
+
+- **Merging** two sorted lists `A` and `B` into `C`
+  - If `A` is empty, copy `B` into `C`
+  - If `B` is empty, copy `A` into `C`
+  - Otherwise, compare first elements of `A` and `B`
+    - Move the smaller of the two to `C`
+  - Repeat till all elements of `A` and `B` have been moved
+
+:::
+
+::::
+
+## Analysing merge
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+- Merge `A` of length $m$, `B` of length $n$
+- Output list `C` has length $m + n$
+- In each iteration we add (at least) one element to `C`
+- Hence `merge` takes time $O(m + n)$
+- Recall that $m + n \leq 2(max(m, n))$
+- If $m \approx n$, merge take time $O(n)$
+
+:::
+
+::: {.column width="50%"}
+
+```python
+def merge(A,B):
+    (m,n) = (len(A),len(B))
+    (C,i,j,k) = ([],0,0,0)
+    while k < m+n:
+        if i == m:
+            C.extend(B[j:])
+            k = k + (n-j)
+        elif j == n:
+            C.extend(A[i:])
+            k = k + (m-i)
+        elif A[i] < B[j]:
+            C.append(A[i])
+            (i,k) = (i+1,k+1)
+        else:
+            C.append(B[j])
+            (j,k) = (j+1,k+1)
+    return(C)
+```
+
+:::
+
+::::
+
+## Analysing mergesort
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+- Let $T(n)$ be the time taken for input of size $n$
+  - For simplicity, assume $n = 2^k$ for some $k$
+- Recurrence
+  - $T(0) = T(1) = 1$
+  - $T(n) = 2T(\frac{n}{2}) + n$
+    - Solve two subproblems of size $\frac{n}{2}$
+    - Merge the solutions in time $\frac{n}{2} + \frac{n}{2} = n$
+- Unwind the recurrence to solve
+
+:::
+
+::: {.column width="40%"}
+
+```python
+def mergesort(A):
+    n = len(A)
+    if n <= 1:
+        return(A)
+    L = mergesort(A[:n//2])
+    R = mergesort(A[n//2:])
+    B = merge(L,R)
+    return(B)
+```
+:::
+
+::::
+
+## Analysing mergesort
+
+:::: {.columns}
+
+::: {.column width="60%"}
+
+- Recurrence
+  - $T(0) = T(1) = 1$
+  - $T(n) = 2T(\frac{n}{2}) + n$
+- $T(n) = 2T(\frac{n}{2}) + n$
+  - $= 2[2T(\frac{n}{4}) + \frac{n}{2}] + n = 2^2T(\frac{n}{2^2}) + 2n$
+  - $= 2^{2}[2T(\frac{n}{2^3}) + \frac{n}{2^2}] + 2n = 2^3T(\frac{n}{2^3}) + 3n$
+  - $\ldots$
+  - $= 2^kT(\frac{n}{2^k}) + kn$
+- When $k = \log n$, $T(\frac{n}{2^k})=T(1)=1$
+- $T(n) = 2^{\log n}T(1) + n\log n = n + n\log n$
+- Hence merge sort is $O(n\log n)$
+:::
+
+::: {.column width="40%"}
+
+```python
+def mergesort(A):
+    n = len(A)
+    if n <= 1:
+        return(A)
+    L = mergesort(A[:n//2])
+    R = mergesort(A[n//2:])
+    B = merge(L,R)
+    return(B)
+```
+:::
+
+::::
+
+## Summary
+
+- Merge sort takes time $O(n \log n)$ so can be used effectively on large inputs
+- Variations on merge are possible
+  - Union of two sorted lists — discard duplicates, if `A[i] == B[j]` move just one copy to `C` and increment both `i` and `j`
+  - Intersection of two sorted lists — when `A[i] == B[j]`, move one copy to `C`, otherwise discard the smaller of `A[i]`, `B[j]`
+  - List difference — elements in `A` but not in `B`
+- Merge needs to create a new list to hold the merged elements
+  - No obvious way to efficiently merge two lists in place
+  - Extra storage can be costly
+- Inherently recursive
+  - Recursive calls and returns are expensive

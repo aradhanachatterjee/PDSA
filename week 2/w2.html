@@ -1553,6 +1553,160 @@ T( n) &amp; =\ T( n//2) +1\\
 <li class="fragment">Merge the sorted halves</li>
 <li class="fragment">Next, we have to check that the complexity is less than <span class="math inline">\(O(n^2)\)</span></li>
 </ul>
+</section></section>
+<section>
+<section id="lecture-2.8-analysis-of-merge-sort" class="title-slide slide level1 center">
+<h1>Lecture 2.8: Analysis of Merge Sort</h1>
+
+</section>
+<section id="merge-sort-2" class="slide level2 center">
+<h2>Merge sort</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li class="fragment">To sort <code>A</code> into <code>B</code>, both of length <span class="math inline">\(n\)</span></li>
+<li class="fragment">If <span class="math inline">\(n \leq 1\)</span>, nothing to be done</li>
+<li class="fragment">Otherwise
+<ul>
+<li class="fragment">Sort <code>A[:n//2]</code> into <code>L</code></li>
+<li class="fragment">Sort <code>A[n//2:]</code> into <code>R</code></li>
+<li class="fragment">Merge <code>L</code> and <code>R</code> into <code>B</code></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<ul>
+<li class="fragment"><strong>Merging</strong> two sorted lists <code>A</code> and <code>B</code> into <code>C</code>
+<ul>
+<li class="fragment">If <code>A</code> is empty, copy <code>B</code> into <code>C</code></li>
+<li class="fragment">If <code>B</code> is empty, copy <code>A</code> into <code>C</code></li>
+<li class="fragment">Otherwise, compare first elements of <code>A</code> and <code>B</code>
+<ul>
+<li class="fragment">Move the smaller of the two to <code>C</code></li>
+</ul></li>
+<li class="fragment">Repeat till all elements of <code>A</code> and <code>B</code> have been moved</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="analysing-merge" class="slide level2 center">
+<h2>Analysing merge</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li class="fragment">Merge <code>A</code> of length <span class="math inline">\(m\)</span>, <code>B</code> of length <span class="math inline">\(n\)</span></li>
+<li class="fragment">Output list <code>C</code> has length <span class="math inline">\(m + n\)</span></li>
+<li class="fragment">In each iteration we add (at least) one element to <code>C</code></li>
+<li class="fragment">Hence <code>merge</code> takes time <span class="math inline">\(O(m + n)\)</span></li>
+<li class="fragment">Recall that <span class="math inline">\(m + n \leq 2(max(m, n))\)</span></li>
+<li class="fragment">If <span class="math inline">\(m \approx n\)</span>, merge take time <span class="math inline">\(O(n)\)</span></li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="kw">def</span> merge(A,B):</span>
+<span id="cb15-2"><a href=""></a>    (m,n) <span class="op">=</span> (<span class="bu">len</span>(A),<span class="bu">len</span>(B))</span>
+<span id="cb15-3"><a href=""></a>    (C,i,j,k) <span class="op">=</span> ([],<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb15-4"><a href=""></a>    <span class="cf">while</span> k <span class="op">&lt;</span> m<span class="op">+</span>n:</span>
+<span id="cb15-5"><a href=""></a>        <span class="cf">if</span> i <span class="op">==</span> m:</span>
+<span id="cb15-6"><a href=""></a>            C.extend(B[j:])</span>
+<span id="cb15-7"><a href=""></a>            k <span class="op">=</span> k <span class="op">+</span> (n<span class="op">-</span>j)</span>
+<span id="cb15-8"><a href=""></a>        <span class="cf">elif</span> j <span class="op">==</span> n:</span>
+<span id="cb15-9"><a href=""></a>            C.extend(A[i:])</span>
+<span id="cb15-10"><a href=""></a>            k <span class="op">=</span> k <span class="op">+</span> (m<span class="op">-</span>i)</span>
+<span id="cb15-11"><a href=""></a>        <span class="cf">elif</span> A[i] <span class="op">&lt;</span> B[j]:</span>
+<span id="cb15-12"><a href=""></a>            C.append(A[i])</span>
+<span id="cb15-13"><a href=""></a>            (i,k) <span class="op">=</span> (i<span class="op">+</span><span class="dv">1</span>,k<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb15-14"><a href=""></a>        <span class="cf">else</span>:</span>
+<span id="cb15-15"><a href=""></a>            C.append(B[j])</span>
+<span id="cb15-16"><a href=""></a>            (j,k) <span class="op">=</span> (j<span class="op">+</span><span class="dv">1</span>,k<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb15-17"><a href=""></a>    <span class="cf">return</span>(C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="analysing-mergesort" class="slide level2 center">
+<h2>Analysing mergesort</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li class="fragment">Let <span class="math inline">\(T(n)\)</span> be the time taken for input of size <span class="math inline">\(n\)</span>
+<ul>
+<li class="fragment">For simplicity, assume <span class="math inline">\(n = 2^k\)</span> for some <span class="math inline">\(k\)</span></li>
+</ul></li>
+<li class="fragment">Recurrence
+<ul>
+<li class="fragment"><span class="math inline">\(T(0) = T(1) = 1\)</span></li>
+<li class="fragment"><span class="math inline">\(T(n) = 2T(\frac{n}{2}) + n\)</span>
+<ul>
+<li class="fragment">Solve two subproblems of size <span class="math inline">\(\frac{n}{2}\)</span></li>
+<li class="fragment">Merge the solutions in time <span class="math inline">\(\frac{n}{2} + \frac{n}{2} = n\)</span></li>
+</ul></li>
+</ul></li>
+<li class="fragment">Unwind the recurrence to solve</li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="sourceCode" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="kw">def</span> mergesort(A):</span>
+<span id="cb16-2"><a href=""></a>    n <span class="op">=</span> <span class="bu">len</span>(A)</span>
+<span id="cb16-3"><a href=""></a>    <span class="cf">if</span> n <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
+<span id="cb16-4"><a href=""></a>        <span class="cf">return</span>(A)</span>
+<span id="cb16-5"><a href=""></a>    L <span class="op">=</span> mergesort(A[:n<span class="op">//</span><span class="dv">2</span>])</span>
+<span id="cb16-6"><a href=""></a>    R <span class="op">=</span> mergesort(A[n<span class="op">//</span><span class="dv">2</span>:])</span>
+<span id="cb16-7"><a href=""></a>    B <span class="op">=</span> merge(L,R)</span>
+<span id="cb16-8"><a href=""></a>    <span class="cf">return</span>(B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="analysing-mergesort-1" class="slide level2 center">
+<h2>Analysing mergesort</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
+<ul>
+<li class="fragment">Recurrence
+<ul>
+<li class="fragment"><span class="math inline">\(T(0) = T(1) = 1\)</span></li>
+<li class="fragment"><span class="math inline">\(T(n) = 2T(\frac{n}{2}) + n\)</span></li>
+</ul></li>
+<li class="fragment"><span class="math inline">\(T(n) = 2T(\frac{n}{2}) + n\)</span>
+<ul>
+<li class="fragment"><span class="math inline">\(= 2[2T(\frac{n}{4}) + \frac{n}{2}] + n = 2^2T(\frac{n}{2^2}) + 2n\)</span></li>
+<li class="fragment"><span class="math inline">\(= 2^{2}[2T(\frac{n}{2^3}) + \frac{n}{2^2}] + 2n = 2^3T(\frac{n}{2^3}) + 3n\)</span></li>
+<li class="fragment"><span class="math inline">\(\ldots\)</span></li>
+<li class="fragment"><span class="math inline">\(= 2^kT(\frac{n}{2^k}) + kn\)</span></li>
+</ul></li>
+<li class="fragment">When <span class="math inline">\(k = \log n\)</span>, <span class="math inline">\(T(\frac{n}{2^k})=T(1)=1\)</span></li>
+<li class="fragment"><span class="math inline">\(T(n) = 2^{\log n}T(1) + n\log n = n + n\log n\)</span></li>
+<li class="fragment">Hence merge sort is <span class="math inline">\(O(n\log n)\)</span></li>
+</ul>
+</div><div class="column" style="width:40%;">
+<div class="sourceCode" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href=""></a><span class="kw">def</span> mergesort(A):</span>
+<span id="cb17-2"><a href=""></a>    n <span class="op">=</span> <span class="bu">len</span>(A)</span>
+<span id="cb17-3"><a href=""></a>    <span class="cf">if</span> n <span class="op">&lt;=</span> <span class="dv">1</span>:</span>
+<span id="cb17-4"><a href=""></a>        <span class="cf">return</span>(A)</span>
+<span id="cb17-5"><a href=""></a>    L <span class="op">=</span> mergesort(A[:n<span class="op">//</span><span class="dv">2</span>])</span>
+<span id="cb17-6"><a href=""></a>    R <span class="op">=</span> mergesort(A[n<span class="op">//</span><span class="dv">2</span>:])</span>
+<span id="cb17-7"><a href=""></a>    B <span class="op">=</span> merge(L,R)</span>
+<span id="cb17-8"><a href=""></a>    <span class="cf">return</span>(B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="summary-7" class="slide level2 center">
+<h2>Summary</h2>
+<ul>
+<li class="fragment">Merge sort takes time <span class="math inline">\(O(n \log n)\)</span> so can be used effectively on large inputs</li>
+<li class="fragment">Variations on merge are possible
+<ul>
+<li class="fragment">Union of two sorted lists — discard duplicates, if <code>A[i] == B[j]</code> move just one copy to <code>C</code> and increment both <code>i</code> and <code>j</code></li>
+<li class="fragment">Intersection of two sorted lists — when <code>A[i] == B[j]</code>, move one copy to <code>C</code>, otherwise discard the smaller of <code>A[i]</code>, <code>B[j]</code></li>
+<li class="fragment">List difference — elements in <code>A</code> but not in <code>B</code></li>
+</ul></li>
+<li class="fragment">Merge needs to create a new list to hold the merged elements
+<ul>
+<li class="fragment">No obvious way to efficiently merge two lists in place</li>
+<li class="fragment">Extra storage can be costly</li>
+</ul></li>
+<li class="fragment">Inherently recursive
+<ul>
+<li class="fragment">Recursive calls and returns are expensive</li>
+</ul></li>
+</ul>
 <div class="quarto-auto-generated-content">
 <div class="footer footer-default">
 
